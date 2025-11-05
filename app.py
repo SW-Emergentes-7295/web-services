@@ -2,13 +2,20 @@ from flask import Flask
 from flasgger import Swagger
 
 from ai_recognition.infrastructure.route import ai_recognition_bp
+
 from home_configuration.infrastructure.route import home_configuration_bp
+from home_configuration.interfaces.home_controller import home_controller_bp
+
 from iam.infrastructure.route import iam_bp
+
 from configuration_preferences.infrastructure.route import configuration_preferences_bp
 
 app = Flask(__name__)
 app.register_blueprint(ai_recognition_bp, url_prefix="/api/v1/ai-recognition")
+
 app.register_blueprint(home_configuration_bp, url_prefix="/api/v1/home-configuration")
+app.register_blueprint(home_controller_bp, url_prefix="/api/v1/home-controller")
+
 app.register_blueprint(iam_bp, url_prefix="/api/v1/iam")
 app.register_blueprint(configuration_preferences_bp, url_prefix="/api/v1/configuration-preferences")
 
@@ -38,4 +45,5 @@ def list_routes():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run(port=8000, debug=True)
+    #app.run(host="0.0.0.0", port=8000, debug=True)
