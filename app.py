@@ -10,7 +10,24 @@ from iam.infrastructure.route import iam_bp
 
 from configuration_preferences.infrastructure.route import configuration_preferences_bp
 
+import mysql.connector
+
 app = Flask(__name__)
+
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password="123",
+  database="visualguide_db"
+)
+mycursor = mydb.cursor()
+################### AQUI SE CREAN LAS TABLAS #############################
+#mycursor.execute("CREATE DATABASE IF NOT EXISTS visualguide_db")
+#mycursor.execute("SHOW DATABASES")
+#mycursor.execute("DROP TABLE homes")
+mycursor.execute("CREATE TABLE IF NOT EXISTS homes (id INT AUTO_INCREMENT PRIMARY KEY, owner_id INT, date DATETIME, map VARCHAR(255))")
+#######################################################################################
+
 app.register_blueprint(ai_recognition_bp, url_prefix="/api/v1/ai-recognition")
 
 app.register_blueprint(home_configuration_bp, url_prefix="/api/v1/home-configuration")

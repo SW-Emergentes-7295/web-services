@@ -1,5 +1,6 @@
-from domain.home import Home
-from infrastructure.home_repository import HomeRepository
+from home_configuration.domain.home import Home
+from datetime import datetime
+from home_configuration.infrastructure.home_repository import HomeRepository
 
 class HomeCommandService:
 
@@ -7,6 +8,5 @@ class HomeCommandService:
         self.repository = home_repository
         pass
 
-    def create_home(self, id: int, owner_id: int, map: str):
-        home = Home(id, owner_id, map)
-        return self.repository.save(home)
+    def create_home(self, owner_id: int, map: str):
+        return self.repository.createHouse(owner_id, datetime.now, map)
