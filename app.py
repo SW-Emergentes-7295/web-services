@@ -1,10 +1,13 @@
 from flask import Flask
 from flasgger import Swagger
+from dotenv import load_dotenv
 
-from ai_recognition.infrastructure.route import ai_recognition_bp
+from ai_recognition.interfaces.route import ai_recognition_bp
 from home_configuration.infrastructure.route import home_configuration_bp
 from iam.infrastructure.route import iam_bp
 from configuration_preferences.infrastructure.route import configuration_preferences_bp
+
+load_dotenv()
 
 app = Flask(__name__)
 app.register_blueprint(ai_recognition_bp, url_prefix="/api/v1/ai-recognition")
