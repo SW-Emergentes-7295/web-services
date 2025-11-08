@@ -9,4 +9,10 @@ class HomeCommandService:
         pass
 
     def create_home(self, owner_id: int, map: str):
-        return self.repository.createHouse(owner_id, datetime.now, map)
+        return self.repository.createHouse(owner_id, datetime.now(), map)
+    
+    def update_home(self, id: int, owner_id: int, map: str):
+        return self.repository.updateHome(id, owner_id,  datetime.now(), map)
+    
+    def delete_home(self, id: int):
+        return self.repository.deleteHome(id)
