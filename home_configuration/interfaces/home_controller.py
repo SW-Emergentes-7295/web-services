@@ -63,7 +63,10 @@ def get_homes():
 })
 def get_home_by_id(id):
     home = home_query_service.get_home_by_id(id)
-    return jsonify(home.to_type_value()), 200
+    if home:
+        return jsonify(home.to_type_value()), 200
+    else:
+        return jsonify({"message": "Home not found"}), 404
     
 
 @home_controller_bp.route("/home", methods=["POST"])
@@ -150,7 +153,10 @@ def create_home():
 def update_home(id):
     data = request.get_json()
     home = home_command_service.update_home(id, data.get("owner_id"),data.get("map"))
-    return jsonify(home.to_type_value()), 200
+    if home:
+        return jsonify(home.to_type_value()), 200
+    else:
+        return jsonify({"message": "Home not found"}), 404
 
 @home_controller_bp.route("/home/<int:id>", methods=["DELETE"])
 @swag_from({

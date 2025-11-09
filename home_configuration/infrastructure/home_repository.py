@@ -11,7 +11,6 @@ class HomeRepository:
         password="123",
         database="visualguide_db"
         )
-        pass
 
     def createHouse(self, owner_id: int, date: datetime, map:str):
         mycursor = self.mydb.cursor()
