@@ -25,12 +25,13 @@ mydb = mysql.connector.connect(
 mycursor = mydb.cursor()
 ################### AQUI SE CREAN LAS TABLAS #############################
 #mycursor.execute("DROP DATABASE IF EXISTS visualguide_db")
-#mycursor.execute("CREATE DATABASE IF NOT EXISTS visualguide_db")
+mycursor.execute("CREATE DATABASE IF NOT EXISTS visualguide_db")
 #mycursor.execute("SHOW DATABASES")
 #mycursor.execute("DROP TABLE homes")
 mycursor.execute("CREATE TABLE IF NOT EXISTS homes (id INT AUTO_INCREMENT PRIMARY KEY, owner_id INT, date DATETIME, map VARCHAR(255))")
 mycursor.execute("CREATE TABLE IF NOT EXISTS rooms (id INT AUTO_INCREMENT PRIMARY KEY, home_id INT, width FLOAT, height FLOAT, depth FLOAT)")
 mycursor.execute("CREATE TABLE IF NOT EXISTS paths (id INT AUTO_INCREMENT PRIMARY KEY, home_id INT, lenght FLOAT)")
+mycursor.execute("CREATE TABLE IF NOT EXISTS path_rooms (path_id INT, room_id INT, PRIMARY KEY (path_id, room_id), FOREIGN KEY (path_id) REFERENCES paths(id), FOREIGN KEY (room_id) REFERENCES rooms(id))")
 #######################################################################################
 
 app.register_blueprint(ai_recognition_bp, url_prefix="/api/v1/ai-recognition")

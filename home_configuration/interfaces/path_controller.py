@@ -4,11 +4,13 @@ from home_configuration.application.path_command_service import PathCommandServi
 from home_configuration.application.path_query_service import PathQueryService
 from home_configuration.infrastructure.path_repository import PathRepository
 from home_configuration.infrastructure.home_repository import HomeRepository
+from home_configuration.infrastructure.room_repository import RoomRepository
 
-pathRepository = PathRepository()
+path_repository = PathRepository()
 home_repository = HomeRepository()
-path_command_service = PathCommandService(pathRepository)
-path_query_service = PathQueryService(pathRepository)
+room_repository = RoomRepository()
+path_command_service = PathCommandService(path_repository)
+path_query_service = PathQueryService(path_repository)
 path_controller_bp = Blueprint('path_controller', __name__)
 
 @path_controller_bp.route("/path", methods=["GET"])
@@ -86,6 +88,13 @@ def get_path_by_id(id):
                         "type": "number",
                         "format": "float",
                         "example": 1.0
+                    },
+                    "rooms_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "example": [1, 2, 3]
                     }
                 },
                 "required": ["home_id", "lenght"]
@@ -111,7 +120,10 @@ def create_path():
     data = request.get_json()
     if home_repository.getHomeById(data.get("home_id")) is None:
         return jsonify({"message": f"Home with id {data.get("home_id")} doesnt exists"}), 400
-    path = path_command_service.create_path(data.get("home_id"), data.get("lenght"))
+    for room_id in data.get("rooms_ids", []):
+        if room_repository.getRoomById(room_id) is None:
+            return jsonify({"message": f"Room with id {room_id} doesnt exists"}), 400
+    path = path_command_service.create_path(data.get("home_id"), data.get("lenght"), data.get("rooms_ids"))
     return jsonify(path.to_type_value()), 201
 
 @path_controller_bp.route("/path/<int:id>", methods=["PUT"])

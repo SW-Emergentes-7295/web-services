@@ -7,8 +7,8 @@ class PathCommandService:
         self.repository = path_repository
         pass
 
-    def create_path(self, home_id: int, lenght: float):
-        return self.repository.createPath(home_id, lenght)
+    def create_path(self, home_id: int, lenght: float, rooms_ids: list):
+        return self.repository.createPath(home_id, lenght, rooms_ids)
     
     def update_path(self, id: int, lenght: float):
         return self.repository.updatePath(id, lenght)
