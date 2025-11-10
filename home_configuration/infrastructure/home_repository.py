@@ -26,7 +26,11 @@ class HomeRepository:
         val = (owner_id, date, map, id)
         mycursor.execute(sql, val)
         self.mydb.commit()
-        return Home(id, owner_id, date, map)
+        sql = "SELECT * FROM homes WHERE id = %s"
+        val = (id,)
+        mycursor.execute(sql, val)
+        row = mycursor.fetchone()
+        return Home(row[0], row[1], row[2], row[3])
     
     def deleteHome(self, id: int):
         mycursor = self.mydb.cursor()

@@ -152,11 +152,10 @@ def create_home():
 })
 def update_home(id):
     data = request.get_json()
-    home = home_command_service.update_home(id, data.get("owner_id"),data.get("map"))
-    if home:
-        return jsonify(home.to_type_value()), 200
-    else:
+    if home_query_service.get_home_by_id(id) is None:
         return jsonify({"message": "Home not found"}), 404
+    home = home_command_service.update_home(id, data.get("owner_id"),data.get("map"))
+    return jsonify(home.to_type_value()), 200
 
 @home_controller_bp.route("/home/<int:id>", methods=["DELETE"])
 @swag_from({
@@ -187,13 +186,9 @@ def update_home(id):
 
 })
 def delete_home(id):
+    if home_query_service.get_home_by_id(id) is None:
+        return jsonify({"message": "Home not found"}), 404
     result = home_command_service.delete_home(id)
-
-    if result:
-        return {
-            "message": f"Home with id: {id} deleted successfully"
-        }
-    else:
-        return {
-            "message": f"Error deleting home with id: {id}"
-        }
+    return {
+        "message": f"Home with id: {id} deleted successfully"
+    }

@@ -3,8 +3,10 @@ from flasgger import swag_from
 from home_configuration.application.room_command_service import RoomCommandService
 from home_configuration.application.room_query_service import RoomQueryService
 from home_configuration.infrastructure.room_repository import RoomRepository
+from home_configuration.infrastructure.home_repository import HomeRepository
 
 room_repository = RoomRepository()
+home_repository = HomeRepository()
 room_command_service = RoomCommandService(room_repository)
 room_query_service = RoomQueryService(room_repository)
 room_controller_bp = Blueprint('room_controller', __name__)
@@ -102,6 +104,8 @@ def get_room_by_id(id):
 })
 def create_room():
     data = request.get_json()
+    if home_repository.getHomeById(data.get("home_id")) is None:
+        return jsonify({"message": f"Home with id {data.get("home_id")} doesnt exists"}), 400
     room = room_command_service.create_room(data.get("home_id"), data.get("width"), data.get("height"), data.get("depth"))
     return jsonify(room.to_type_value()), 201
 
@@ -148,11 +152,10 @@ def create_room():
 })
 def update_room(id):
     data = request.get_json()
-    room = room_command_service.update_room(id, data.get("width"), data.get("height"), data.get("depth"))
-    if room:
-        return jsonify(room.to_type_value()), 200
-    else:
+    if room_query_service.get_room_by_id(id) is None:
         return jsonify({"message": "Room not found"}), 404
+    room = room_command_service.update_room(id, data.get("width"), data.get("height"), data.get("depth"))
+    return jsonify(room.to_type_value()), 200
     
 
 @room_controller_bp.route("/room/<int:id>", methods=["DELETE"])
@@ -183,8 +186,7 @@ def update_room(id):
     }
 })
 def delete_room(id):
-    result = room_command_service.delete_room(id)
-    if result:
-        return jsonify({"message": f"Room with id: {id} deleted successfully"}), 200
-    else:
+    if room_query_service.get_room_by_id(id) is None:
         return jsonify({"message": "Room not found"}), 404
+    result = room_command_service.delete_room(id)
+    return jsonify({"message": f"Room with id: {id} deleted successfully"}), 200

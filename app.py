@@ -24,6 +24,7 @@ mydb = mysql.connector.connect(
 )
 mycursor = mydb.cursor()
 ################### AQUI SE CREAN LAS TABLAS #############################
+#mycursor.execute("DROP DATABASE IF EXISTS visualguide_db")
 #mycursor.execute("CREATE DATABASE IF NOT EXISTS visualguide_db")
 #mycursor.execute("SHOW DATABASES")
 #mycursor.execute("DROP TABLE homes")

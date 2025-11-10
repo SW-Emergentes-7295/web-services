@@ -25,7 +25,11 @@ class RoomRepository:
         val = (width, height, depth, id)
         mycursor.execute(sql, val)
         self.mydb.commit()
-        return Room(id, None, width, height, depth)
+        sql = "SELECT * FROM rooms WHERE id = %s"
+        val = (id,)
+        mycursor.execute(sql, val)
+        row = mycursor.fetchone()
+        return Room(row[0], row[1], row[2], row[3], row[4])
     
     def deleteRoom(self, id: int):
         mycursor = self.mydb.cursor()

@@ -3,8 +3,10 @@ from flasgger import swag_from
 from home_configuration.application.path_command_service import PathCommandService
 from home_configuration.application.path_query_service import PathQueryService
 from home_configuration.infrastructure.path_repository import PathRepository
+from home_configuration.infrastructure.home_repository import HomeRepository
 
 pathRepository = PathRepository()
+home_repository = HomeRepository()
 path_command_service = PathCommandService(pathRepository)
 path_query_service = PathQueryService(pathRepository)
 path_controller_bp = Blueprint('path_controller', __name__)
@@ -107,6 +109,8 @@ def get_path_by_id(id):
 })
 def create_path():
     data = request.get_json()
+    if home_repository.getHomeById(data.get("home_id")) is None:
+        return jsonify({"message": f"Home with id {data.get("home_id")} doesnt exists"}), 400
     path = path_command_service.create_path(data.get("home_id"), data.get("lenght"))
     return jsonify(path.to_type_value()), 201
 
@@ -155,12 +159,12 @@ def create_path():
 })
 def update_path(id):
     data = request.get_json()
-    path = path_command_service.update_path(id, data.get("lenght"))
-    if path:
-        return jsonify(path.to_type_value()), 200
-    else:
+    if path_query_service.get_path_by_id(id) is None:
         return jsonify({"message": "Path not found"}), 404
+    path = path_command_service.update_path(id, data.get("lenght"))
+    return jsonify(path.to_type_value()), 200
     
+
 @path_controller_bp.route("/path/<int:id>", methods=["DELETE"])
 @swag_from({
     "tags": ["Path Controller"],
@@ -189,8 +193,7 @@ def update_path(id):
     }
 })
 def delete_path(id):
-    result = path_command_service.delete_path(id)
-    if result:
-        return jsonify({"message": "Path deleted successfully"}), 200
-    else:
+    if path_query_service.get_path_by_id(id) is None:
         return jsonify({"message": "Path not found"}), 404
+    result = path_command_service.delete_path(id)
+    return jsonify({"message": "Path deleted successfully"}), 200

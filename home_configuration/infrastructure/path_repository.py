@@ -25,7 +25,11 @@ class PathRepository:
         val = (lenght, id)
         mycursor.execute(sql, val)
         self.mydb.commit()
-        return Path(id, None, lenght)
+        sql = "SELECT * FROM paths WHERE id = %s"
+        val = (id,)
+        mycursor.execute(sql, val)
+        row = mycursor.fetchone()
+        return Path(row[0], row[1], row[2])
     
     def deletePath(self, id: int):
         mycursor = self.mydb.cursor()
