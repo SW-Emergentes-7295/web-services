@@ -1,12 +1,13 @@
 from flask import Flask
+from flask_cors import CORS
 from flasgger import Swagger
 
 from ai_recognition.infrastructure.route import ai_recognition_bp
 
 from home_configuration.infrastructure.route import home_configuration_bp
-# from home_configuration.interfaces.home_controller import home_controller_bp
-# from home_configuration.interfaces.room_controller import room_controller_bp
-# from home_configuration.interfaces.path_controller import path_controller_bp
+from home_configuration.interfaces.home_controller import home_controller_bp
+from home_configuration.interfaces.room_controller import room_controller_bp
+from home_configuration.interfaces.path_controller import path_controller_bp
 
 from iam.infrastructure.route import init_iam_routes
 
@@ -15,6 +16,7 @@ from configuration_preferences.infrastructure.route import configuration_prefere
 import mysql.connector
 
 app = Flask(__name__)
+CORS(app)
 
 mydb = mysql.connector.connect(
   host="localhost",
@@ -38,9 +40,9 @@ mycursor.execute("CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMAR
 app.register_blueprint(ai_recognition_bp, url_prefix="/api/v1/ai-recognition")
 
 app.register_blueprint(home_configuration_bp, url_prefix="/api/v1/home-configuration")
-# app.register_blueprint(home_controller_bp, url_prefix="/api/v1/home-controller")
-# app.register_blueprint(room_controller_bp, url_prefix="/api/v1/room-controller")
-# app.register_blueprint(path_controller_bp, url_prefix="/api/v1/path-controller")
+app.register_blueprint(home_controller_bp, url_prefix="/api/v1/home-controller")
+app.register_blueprint(room_controller_bp, url_prefix="/api/v1/room-controller")
+app.register_blueprint(path_controller_bp, url_prefix="/api/v1/path-controller")
 
 # Inicializar y registrar el módulo IAM con su conexión MySQL
 iam_bp = init_iam_routes(mydb)
