@@ -4,11 +4,11 @@ from flasgger import Swagger
 from ai_recognition.infrastructure.route import ai_recognition_bp
 
 from home_configuration.infrastructure.route import home_configuration_bp
-from home_configuration.interfaces.home_controller import home_controller_bp
-from home_configuration.interfaces.room_controller import room_controller_bp
-from home_configuration.interfaces.path_controller import path_controller_bp
+# from home_configuration.interfaces.home_controller import home_controller_bp
+# from home_configuration.interfaces.room_controller import room_controller_bp
+# from home_configuration.interfaces.path_controller import path_controller_bp
 
-from iam.infrastructure.route import iam_bp
+from iam.infrastructure.route import init_iam_routes
 
 from configuration_preferences.infrastructure.route import configuration_preferences_bp
 
@@ -32,17 +32,20 @@ mycursor.execute("CREATE TABLE IF NOT EXISTS homes (id INT AUTO_INCREMENT PRIMAR
 mycursor.execute("CREATE TABLE IF NOT EXISTS rooms (id INT AUTO_INCREMENT PRIMARY KEY, home_id INT, width FLOAT, height FLOAT, depth FLOAT)")
 mycursor.execute("CREATE TABLE IF NOT EXISTS paths (id INT AUTO_INCREMENT PRIMARY KEY, home_id INT, lenght FLOAT)")
 mycursor.execute("CREATE TABLE IF NOT EXISTS path_rooms (path_id INT, room_id INT, PRIMARY KEY (path_id, room_id), FOREIGN KEY (path_id) REFERENCES paths(id), FOREIGN KEY (room_id) REFERENCES rooms(id))")
-mycursor.execute("CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, full_name VARCHAR(100) NOT NULL, email VARCHAR(100) NOT NULL UNIQUE, phone VARCHAR(20), password_hash VARCHAR(255) NOT NULL, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)")
+mycursor.execute("CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100) NOT NULL, email VARCHAR(100) NOT NULL UNIQUE, phone VARCHAR(20), password VARCHAR(255) NOT NULL)")
 #######################################################################################
 
 app.register_blueprint(ai_recognition_bp, url_prefix="/api/v1/ai-recognition")
 
 app.register_blueprint(home_configuration_bp, url_prefix="/api/v1/home-configuration")
-app.register_blueprint(home_controller_bp, url_prefix="/api/v1/home-controller")
-app.register_blueprint(room_controller_bp, url_prefix="/api/v1/room-controller")
-app.register_blueprint(path_controller_bp, url_prefix="/api/v1/path-controller")
+# app.register_blueprint(home_controller_bp, url_prefix="/api/v1/home-controller")
+# app.register_blueprint(room_controller_bp, url_prefix="/api/v1/room-controller")
+# app.register_blueprint(path_controller_bp, url_prefix="/api/v1/path-controller")
 
+# Inicializar y registrar el módulo IAM con su conexión MySQL
+iam_bp = init_iam_routes(mydb)
 app.register_blueprint(iam_bp, url_prefix="/api/v1/iam")
+
 app.register_blueprint(configuration_preferences_bp, url_prefix="/api/v1/configuration-preferences")
 
 swagger = Swagger(app, template={
