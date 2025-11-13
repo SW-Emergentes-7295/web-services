@@ -2,11 +2,15 @@
 
 from flask import Blueprint, request, jsonify
 from flasgger import swag_from
+import bcrypt
+import jwt
+import datetime
 
 from iam.infrastructure.user_repository import SQLiteUserRepository
 from iam.application.user_command_service import UserCommandService
 from iam.application.user_query_service import UserQueryService
 
+SECRET_KEY = "clave_visual_guide_123"
 iam_bp = Blueprint('iam', __name__)
 
 def init_iam_routes(db_connection):
@@ -51,6 +55,65 @@ def init_iam_routes(db_connection):
 
         user = user_command_service.create_user(name, email, phone, password)
         return jsonify(user.to_dict()), 201
+    
+    # Login usuario
+    @iam_bp.route("/login", methods=["POST"])
+    @swag_from({
+        "tags": ["IAM"],
+        "description": "Inicia sesión y obtiene un token JWT",
+        "parameters": [
+            {
+                "name": "body",
+                "in": "body",
+                "required": True,
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "email": {"type": "string", "example": "john@example.com"},
+                        "password": {"type": "string", "example": "123456"}
+                    }
+                }
+            }
+        ],
+        "responses": {
+            200: {"description": "Login exitoso. Devuelve token JWT"},
+            401: {"description": "Credenciales inválidas"}
+        }
+    })
+    def login():
+        data = request.get_json()
+        email = data.get("email")
+        password = data.get("password")
+
+        if not email or not password:
+            return jsonify({"error": "email y password son requeridos"}), 400
+
+        user = user_repository.find_by_email(email)
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+
+        # Verifica contraseña encriptada
+        if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+            return jsonify({"error": "Contraseña incorrecta"}), 401
+
+        # Genera token JWT válido por 2 horas
+        payload = {
+            "user_id": user.id,
+            "email": user.email,
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=2)
+        }
+        token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+
+        return jsonify({
+            "message": "Login exitoso",
+            "token": token,
+            "user": {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "phone": user.phone
+            }
+        }), 200
 
     # Listar usuarios
     @iam_bp.route("/users", methods=["GET"])
