@@ -1,38 +1,26 @@
 from flask import Flask
+from flask_cors import CORS
 from flasgger import Swagger
+from dotenv import load_dotenv
 
-from ai_recognition.infrastructure.route import ai_recognition_bp
+from ai_recognition.interfaces.route import ai_recognition_bp
 
 from home_configuration.infrastructure.route import home_configuration_bp
-from home_configuration.interfaces.home_controller import home_controller_bp
-from home_configuration.interfaces.room_controller import room_controller_bp
-from home_configuration.interfaces.path_controller import path_controller_bp
 
-from iam.infrastructure.route import iam_bp
+
+from iam.infrastructure.route import init_iam_routes
 
 from configuration_preferences.infrastructure.route import configuration_preferences_bp
 
-import mysql.connector
+from shared.infrastructure.database import db
+
+load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 
-mydb = mysql.connector.connect(
-  host="localhost",
-  user="root",
-  password="123",
-  database="visualguide_db"
-)
-mycursor = mydb.cursor()
-################### AQUI SE CREAN LAS TABLAS #############################
-#mycursor.execute("DROP DATABASE IF EXISTS visualguide_db")
-mycursor.execute("CREATE DATABASE IF NOT EXISTS visualguide_db")
-#mycursor.execute("SHOW DATABASES")
-#mycursor.execute("DROP TABLE homes")
-mycursor.execute("CREATE TABLE IF NOT EXISTS homes (id INT AUTO_INCREMENT PRIMARY KEY, owner_id INT, date DATETIME, map VARCHAR(255))")
-mycursor.execute("CREATE TABLE IF NOT EXISTS rooms (id INT AUTO_INCREMENT PRIMARY KEY, home_id INT, width FLOAT, height FLOAT, depth FLOAT)")
-mycursor.execute("CREATE TABLE IF NOT EXISTS paths (id INT AUTO_INCREMENT PRIMARY KEY, home_id INT, lenght FLOAT)")
-mycursor.execute("CREATE TABLE IF NOT EXISTS path_rooms (path_id INT, room_id INT, PRIMARY KEY (path_id, room_id), FOREIGN KEY (path_id) REFERENCES paths(id), FOREIGN KEY (room_id) REFERENCES rooms(id))")
-#######################################################################################
+# Crear la base de datos y las tablas si no existen
+db.create_schemas()
 
 app.register_blueprint(ai_recognition_bp, url_prefix="/api/v1/ai-recognition")
 
@@ -42,6 +30,7 @@ app.register_blueprint(room_controller_bp, url_prefix="/api/v1/room-controller")
 app.register_blueprint(path_controller_bp, url_prefix="/api/v1/path-controller")
 
 app.register_blueprint(iam_bp, url_prefix="/api/v1/iam")
+
 app.register_blueprint(configuration_preferences_bp, url_prefix="/api/v1/configuration-preferences")
 
 swagger = Swagger(app, template={
@@ -70,5 +59,5 @@ def list_routes():
 
 
 if __name__ == "__main__":
-    app.run(port=8000, debug=True)
-    #app.run(host="0.0.0.0", port=8000, debug=True)
+    #app.run(port=8000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
