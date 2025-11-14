@@ -12,7 +12,7 @@ from home_configuration.interfaces.path_controller import path_controller_bp
 
 from iam.infrastructure.route import init_iam_routes
 
-from configuration_preferences.infrastructure.route import configuration_preferences_bp
+from configuration_preferences.interfaces.route import configuration_preferences_bp
 
 from shared.infrastructure.database import db
 
