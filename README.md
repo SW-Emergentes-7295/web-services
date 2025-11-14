@@ -22,9 +22,14 @@ To get started with the Visualguide web services, follow these steps:
 3. Install dependencies for each service:
     ```bash
     python -m venv venv
-    source venv/bin/activate
+    cd venv/Scripts/activate
     pip install -r requirements.txt
     ```
+
+4. Create .env file in the root directory and add the following environment variables:
+   ```env
+   API_KEY_GEMINI=api_key_here
+   ```
 
 4. Run the services:
    ```bash
