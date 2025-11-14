@@ -105,7 +105,7 @@ def get_room_by_id(id):
 def create_room():
     data = request.get_json()
     if home_repository.getHomeById(data.get("home_id")) is None:
-        return jsonify({"message": f"Home with id {data.get("home_id")} doesnt exists"}), 400
+        return jsonify({"message": f"Home with id {data.get('home_id')} doesnt exists"}), 400
     room = room_command_service.create_room(data.get("home_id"), data.get("width"), data.get("height"), data.get("depth"))
     return jsonify(room.to_type_value()), 201
 

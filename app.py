@@ -6,7 +6,9 @@ from dotenv import load_dotenv
 from ai_recognition.interfaces.route import ai_recognition_bp
 
 from home_configuration.infrastructure.route import home_configuration_bp
-
+from home_configuration.interfaces.home_controller import home_controller_bp
+from home_configuration.interfaces.room_controller import room_controller_bp
+from home_configuration.interfaces.path_controller import path_controller_bp
 
 from iam.infrastructure.route import init_iam_routes
 
@@ -29,9 +31,11 @@ app.register_blueprint(home_controller_bp, url_prefix="/api/v1/home-controller")
 app.register_blueprint(room_controller_bp, url_prefix="/api/v1/room-controller")
 app.register_blueprint(path_controller_bp, url_prefix="/api/v1/path-controller")
 
+iam_bp = init_iam_routes(db.get_database())
 app.register_blueprint(iam_bp, url_prefix="/api/v1/iam")
 
 app.register_blueprint(configuration_preferences_bp, url_prefix="/api/v1/configuration-preferences")
+
 
 swagger = Swagger(app, template={
     "swagger": "2.0",

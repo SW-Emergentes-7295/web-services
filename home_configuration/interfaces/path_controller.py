@@ -119,7 +119,7 @@ def get_path_by_id(id):
 def create_path():
     data = request.get_json()
     if home_repository.getHomeById(data.get("home_id")) is None:
-        return jsonify({"message": f"Home with id {data.get("home_id")} doesnt exists"}), 400
+        return jsonify({"message": f"Home with id {data.get('home_id')} doesnt exists"}), 400
     for room_id in data.get("rooms_ids", []):
         if room_repository.getRoomById(room_id) is None:
             return jsonify({"message": f"Room with id {room_id} doesnt exists"}), 400
