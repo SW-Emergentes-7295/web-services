@@ -25,9 +25,10 @@ db.create_schemas()
 app.register_blueprint(ai_recognition_bp, url_prefix="/api/v1/ai-recognition")
 
 app.register_blueprint(home_configuration_bp, url_prefix="/api/v1/home-configuration")
+app.register_blueprint(home_controller_bp, url_prefix="/api/v1/home-controller")
+app.register_blueprint(room_controller_bp, url_prefix="/api/v1/room-controller")
+app.register_blueprint(path_controller_bp, url_prefix="/api/v1/path-controller")
 
-# Inicializar y registrar el módulo IAM con su conexión MySQL
-iam_bp = init_iam_routes(db.get_database())
 app.register_blueprint(iam_bp, url_prefix="/api/v1/iam")
 
 app.register_blueprint(configuration_preferences_bp, url_prefix="/api/v1/configuration-preferences")
