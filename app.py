@@ -1,18 +1,35 @@
 from flask import Flask
+from flask_cors import CORS
 from flasgger import Swagger
 from dotenv import load_dotenv
 
 from ai_recognition.interfaces.route import ai_recognition_bp
+
 from home_configuration.infrastructure.route import home_configuration_bp
-from iam.infrastructure.route import iam_bp
+
+
+from iam.infrastructure.route import init_iam_routes
+
 from configuration_preferences.infrastructure.route import configuration_preferences_bp
+
+from shared.infrastructure.database import db
 
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
+
+# Crear la base de datos y las tablas si no existen
+db.create_schemas()
+
 app.register_blueprint(ai_recognition_bp, url_prefix="/api/v1/ai-recognition")
+
 app.register_blueprint(home_configuration_bp, url_prefix="/api/v1/home-configuration")
+
+# Inicializar y registrar el módulo IAM con su conexión MySQL
+iam_bp = init_iam_routes(db.get_database())
 app.register_blueprint(iam_bp, url_prefix="/api/v1/iam")
+
 app.register_blueprint(configuration_preferences_bp, url_prefix="/api/v1/configuration-preferences")
 
 swagger = Swagger(app, template={
@@ -41,4 +58,5 @@ def list_routes():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    #app.run(port=8000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
