@@ -1,7 +1,8 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 from flasgger import Swagger
 from dotenv import load_dotenv
+from datetime import datetime
 
 from ai_recognition.interfaces.route import ai_recognition_bp
 
@@ -61,6 +62,13 @@ def list_routes():
         })
     return {"routes": routes}
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({
+        "status": "healthy",
+        "service": "Visual Guide API",
+        "timestamp": datetime.now().isoformat()
+    }), 200
 
 if __name__ == "__main__":
     #app.run(port=8000, debug=True)
