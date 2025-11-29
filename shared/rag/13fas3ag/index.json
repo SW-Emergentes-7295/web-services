@@ -1,0 +1,57 @@
+{
+    "user_id": "13fas3ag",
+    "created_at": "2025-11-28T21:52:04.570811",
+    "total_images": 7,
+    "results": [
+        {
+            "image_filename": "rag_img1_20251128_215204_570811_sala1.jpg",
+            "classes": [
+                "Sofa/Sillon",
+                "Televisor"
+            ]
+        },
+        {
+            "image_filename": "rag_img2_20251128_215205_024625_sala2.jpg",
+            "classes": [
+                "Sofa/Sillon",
+                "Televisor",
+                "Mesa"
+            ]
+        },
+        {
+            "image_filename": "rag_img3_20251128_215205_228892_dormitorio1.jpg",
+            "classes": [
+                "Cama",
+                "Mesa"
+            ]
+        },
+        {
+            "image_filename": "rag_img4_20251128_215205_541889_dormitorio2.jpg",
+            "classes": [
+                "Cama"
+            ]
+        },
+        {
+            "image_filename": "rag_img5_20251128_215205_761907_cocina.jpg",
+            "classes": [
+                "Refrigerador",
+                "Televisor"
+            ]
+        },
+        {
+            "image_filename": "rag_img6_20251128_215206_240473_comedor.jpg",
+            "classes": [
+                "Silla",
+                "Mesa"
+            ]
+        },
+        {
+            "image_filename": "rag_img7_20251128_215206_422107_ba\u00f1o.jpg",
+            "classes": [
+                "Mesa",
+                "Silla",
+                "Televisor"
+            ]
+        }
+    ]
+}
