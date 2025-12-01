@@ -1,12 +1,22 @@
 import mysql.connector
 
 class DatabaseConnection:
+    
     def __init__(self):
         self.mydb = mysql.connector.connect(
             host="localhost",
             user="root",
             password="12345678",
-            database="visualguide_db"
+        )
+
+        cursor = self.mydb.cursor()
+        cursor.execute("CREATE DATABASE IF NOT EXISTS visualguide_db")
+
+        self.mydb = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="12345678",
+            database="visualguide_db",
         )
 
     def get_database(self):
